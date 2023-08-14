@@ -2,7 +2,7 @@
 
 /*
  * Plugin Name:       Add New Post
- * Plugin URI:        https://wordpress.org/plugins/add-new-post/
+ * Plugin URI:        https://github.com/mehrazmorshed/add-new-post/
  * Description:       Handle the basics with this plugin.
  * Version:           1.0
  * Requires at least: 5.2
@@ -11,7 +11,6 @@
  * Author URI:        https://profiles.wordpress.org/mehrazmorshed/
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Update URI:        https://example.com/my-plugin/
  * Text Domain:       add-new-post
  * Domain Path:       /languages
  */
