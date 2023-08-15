@@ -1,1 +1,113 @@
+.add-new-post-main {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1000px;
+  width: 90%;
+  box-sizing: border-box;
+  margin-top: 25px;
+}
 
+.add-new-post-common {
+  background: #FFF;
+  border-radius: 5px;
+  border-radius: 1px solid #ddd;
+  padding: 20px 25px;
+  border: 5px solid #135e96;
+
+}
+
+.add-new-post-body {
+  flex-basis: 65%;
+  margin-right: 5%;
+}
+
+.add-new-post-aside {
+  flex-basis: 30%;
+}
+
+#page-title {
+  display: block;
+  text-align: center;
+  font-weight: bold;
+  font-size: 28px;
+  padding: 0;
+  margin-bottom: 20px;
+  margin-top: 3px;
+}
+.aside-title {
+  display: block;
+  text-align: center;
+  font-weight: bold;
+  font-size: 20px;
+  padding: 3px;
+  margin-bottom: 10px;
+  margin-top: 0;
+}
+
+.add-new-post-main label {
+  display: block;
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.add-new-post-main input {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 0 10px #ddd;
+  width: 90%;
+  padding: 5px;
+}
+
+button.btn {
+    margin: 0 auto !important;
+    display: block !important;
+    width: 90%;
+}
+
+.add-new-post-main input[type="color"] {
+  padding: 3px;
+  cursor: pointer;
+  width: 80px;
+  height: 40px;
+}
+/**
+.add-new-post-main input[type="submit"] {
+  background: #bd5fff;
+  border: 1px solid #bd5fff;
+  color: #fff;
+  padding: 5px 35px;
+  width: auto;
+  cursor: pointer;
+  transition: 0.5s;
+}
+
+.add-new-post-main input[type="submit"]:hover {
+  background: #262626;
+  border: 1px solid #262626;
+}
+**/
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+a.link {
+  text-decoration: none;
+  text-align: center;
+}
+
+.author-title {
+  margin: 5px;
+  text-align: center;
+}
+
+.author-card {
+  padding: 5px;
+  border: 1px dotted #000;
+  margin-bottom: 10px;
+}
