@@ -2,15 +2,17 @@
 
 /*
  * Plugin Name:       Add New Post
- * Plugin URI:        https://github.com/mehrazmorshed/add-new-post/
- * Description:       Handle the basics with this plugin.
+ * Plugin URI:        https://github.com/mehrazmorshed/add-new-post
+ * Description:       Create a form by using shortcode 'post_form' and insert a new post while submitting data.
  * Version:           1.0
+ * Tested Up to:      6.3
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Mehraz Morshed
  * Author URI:        https://profiles.wordpress.org/mehrazmorshed/
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ * Update URI:        https://github.com/mehrazmorshed/add-new-post
  * Text Domain:       add-new-post
  * Domain Path:       /languages
  */
@@ -30,19 +32,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/**
+ * EXIT IF ACCESSED DIRECTLY
+ */
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
 /**
- * 1. registers a shortcode
+ * REGISTERING SHORTCODE
  */
 add_shortcode('post_form', 'add_new_post_form');
 
 /**
- * 2. placing that shortcode on a page renders a form.
- * The form contains these fields-
- * Post Title, Post Content, Your Name and Email Address
+ * RENDERING A FORM
  */
 function add_new_post_form() {
     $new_post_form = '';
@@ -73,110 +76,247 @@ function add_new_post_form() {
     return $new_post_form;
  }
 
-
-
-
 /**
- * 5. Optionally, create a new user using the given email and assign it to the post
+ * CREATING A NEW USER
  */
-
-function create_new_user() {
-
-    if(isset($_POST['post_submit'])) {
-
-        $username = sanitize_text_field($_POST['your_name']);
-        $email = sanitize_text_field($_POST['email_address']);
-        $password = '123456';
-
-  if( username_exists( $username ) || email_exists( $email ) ) {
-    return;
-  }
-
-  $user_id = wp_create_user( $username, $password, $email );
-
-  if( is_wp_error( $user_id ) ) {
-    
-    die( $user_id->get_error_message() );
-    
-  }
-
-  $new_user = get_user_by( 'id', $user_id );
-  
-}
-}
-
 add_action( 'init', 'create_new_user' );
 
-
-
-
+/**
+ * CALLBACK FUNCTION
+ */
+function create_new_user() {
+    if( isset( $_POST[ 'post_submit' ] ) ) {
+        $username = sanitize_text_field( $_POST[ 'your_name' ] );
+        $email = sanitize_text_field( $_POST[ 'email_address' ] );
+        $password = '123456';
+        if( username_exists( $username ) || email_exists( $email ) ) {
+            return;
+        }
+        $user_id = wp_create_user( $username, $password, $email );
+        if( is_wp_error( $user_id ) ) {
+            die( $user_id->get_error_message() );
+        }
+        $new_user = get_user_by( 'id', $user_id );
+    }
+}
 
 /**
- * 3. submitting the form creates a post using the corresponding field data
+ * CREATING A POST
  */
-
-function create_a_new_post(){
-
-    if(isset($_POST['post_submit'])) {
-
-        $post_title = sanitize_text_field($_POST['post_title']);
-        $post_content = sanitize_textarea_field($_POST['post_content']);
-        $your_name = sanitize_text_field($_POST['your_name']);
-        $email_address = sanitize_text_field($_POST['email_address']);
-
-    $new_post_array = array(
-        'post_title' => $post_title,
-        'post_content' => $post_content,
-        'post_status' => 'publish',
-        'post_author' => get_current_user_id(),
-        'post_type' => 'post'
-    );
-
-    wp_insert_post( $new_post_array );
-}
-}
 add_action('init','create_a_new_post');
 
+/**
+ * CALLBACK FUNCTION
+ */
+function create_a_new_post(){
+    if( isset( $_POST[ 'post_submit' ] ) ) {
+        $post_title = sanitize_text_field( $_POST[ 'post_title' ] );
+        $post_content = sanitize_textarea_field( $_POST[ 'post_content' ] );
+        $your_name = sanitize_text_field( $_POST[ 'your_name' ] );
+        $email_address = sanitize_text_field( $_POST[ 'email_address' ] );
+        $new_post_array = array(
+            'post_title' => $post_title,
+            'post_content' => $post_content,
+            'post_status' => 'publish',
+            'post_author' => get_current_user_id(),
+            'post_type' => 'post'
+        );
+        wp_insert_post( $new_post_array );
+    }
+}
 
 /**
- * 4. additionally it sends an email 
- * to the mentioned email address
- * containing the newly published post URL
+ * SENDING EMAIL
  */
-
-
-  function add_new_post_data() {
-    if(isset($_POST['post_submit'])) {
-        $mail_head = sanitize_text_field($_POST['post_title']);
-        $mail_body = sanitize_textarea_field($_POST['post_content']);
-        $receiver_name = sanitize_text_field($_POST['your_name']);
-        $receiver_email = sanitize_text_field($_POST['email_address']);
-
-
-
+function add_new_post_data() {
+    if( isset( $_POST[ 'post_submit' ] ) ) {
+        $mail_head = sanitize_text_field( $_POST[ 'post_title' ] );
+        $mail_body = sanitize_textarea_field( $_POST[ 'post_content' ] );
+        $receiver_name = sanitize_text_field( $_POST[ 'your_name' ] );
+        $receiver_email = sanitize_text_field( $_POST[ 'email_address' ] );
         $to = $receiver_email;
         $subject = $mail_head;
         $message = $mail_body. '<br>' .$receiver_name;
-
-        wp_mail($to, $subject,$message);
+        wp_mail( $to, $subject,$message );
     }
  }
 
-
 /**
- * enqueue css style
+ * ENQUEUE CSS STYLE
  */
-
-function add_new_post_enqueue_style() {wp_enqueue_style( 'add-new-post-style', plugins_url( 'assets/css/add-new-post-style.css', __FILE__ ) );
-}
 add_action( 'wp_enqueue_scripts', 'add_new_post_enqueue_style' );
 
 /**
- * enqueue JavaScript and jQuery
+ * CALLBACK FUNCTION
+ */
+function add_new_post_enqueue_style() {
+    wp_enqueue_style( 'add-new-post-style', plugins_url( 'assets/css/add-new-post-style.css', __FILE__ ) );
+}
+
+/**
+ * ENQUEUE JavaScript & jQuery
+ */
+add_action( 'wp_enqueue_scripts', 'add_new_post_enqueue_script' );
+
+/**
+ * CALLBACK FUNCTION
  */
 function add_new_post_enqueue_script() {
-
     wp_enqueue_script( 'jquery' );
     wp_enqueue_script( 'add-new-post-script', plugins_url( 'assets/js/add-new-post-script.js', __FILE__ ), array(), '1.0.0', 'true' );
 }
-add_action( 'wp_enqueue_scripts', 'add_new_post_enqueue_script' );
+
+/**
+ * ENQUEUE ADMIN SETTINGS STYLE
+ */
+add_action( 'admin_enqueue_scripts', 'add_new_post_style_settings' );
+
+/**
+ * CALLBACK FUNCTION
+ */
+function add_new_post_style_settings() {
+    wp_enqueue_style( 'add-new-post-settings', plugins_url( 'assets/css/add-new-post-settings.css', __FILE__ ), false, "1.0.0" );
+}
+
+/**
+ * RENDERING ADMIN SETTINGS PAGE
+ */
+add_action( 'admin_menu', 'add_new_post_settings_page' );
+
+/**
+ * CALLBACK FUNCTION
+ */
+function add_new_post_settings_page() {
+    add_menu_page( 'Add New Post Settings', 'Add New Post', 'manage_options', 'add-new-post', 'add_new_post_settings', 'dashicons-admin-plugins', 101 );
+}
+
+/**
+ * CALLBACK FUNCTION PAGE RENDERING
+ */
+function add_new_post_settings() {
+    ?>
+    <div class="add-new-post-main">
+        <!-- add-new-post-body CLASS STARTS-->
+        <div class="add-new-post-body add-new-post-common">
+            <h1 id="page-title"><?php print esc_attr( 'Add New Post Settings' ); ?></h1>
+            <!-- FORM STARTS -->
+            <form action="options.php" method="post">
+                <?php wp_nonce_field( 'update-options' ); ?>
+                <!-- FORM BACKGROUND COLOR -->
+                <label for="add-new-post-form-bg-color" name="add-new-post-form-bg-color"><?php print esc_attr( 'Form Background Color' ); ?></label>
+                <input type="color" id="add-new-post-form-bg-color" name="add-new-post-form-bg-color" value="<?php print get_option('add-new-post-form-bg-color'); ?>">
+                <!-- SUBMIT BUTTON COLOR -->
+                <label for="add-new-post-button-color" name="add-new-post-button-color"><?php print esc_attr( 'Submit Button Color' ); ?></label>
+                <input type="color" id="add-new-post-button-color" name="add-new-post-button-color" value="<?php print get_option('add-new-post-button-color'); ?>">
+                <!-- SUBMIT BUTTON HOVER -->
+                <label for="add-new-post-button-hover" name="add-new-post-button-hover"><?php print esc_attr( 'Submit Button Hover' ); ?></label>
+                <input type="color" id="add-new-post-button-hover" name="add-new-post-button-hover" value="<?php print get_option('add-new-post-button-hover'); ?>">
+                <!-- INPUT TYPES -->
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="page_options" value="add-new-post-form-bg-color, add-new-post-button-color, add-new-post-button-hover">
+                <input class="button button-primary" type="submit" name="submit" value="<?php _e('Save Changes', 'add-new-post'); ?>">
+            </form>
+            <!-- FORM ENDS -->
+        </div>
+        <!-- add-new-post-body CLASS ENDS-->
+        <!-- add-new-post-aside CLASS STARTS-->
+        <div class="add-new-post-aside add-new-post-common">
+            <!-- AUTHOR INFO SECTION STARTS -->
+            <h2 class="aside-title"><?php print esc_attr( 'Plugin Author Info' ); ?></h2>
+            <div class="author-card">
+                <a class="link" href="https://profiles.wordpress.org/mehrazmorshed/" target="_blank">
+                    <img class="center" src="<?php print plugin_dir_url( __FILE__ ) . '/assets/images/author.png'; ?>" width="128px">
+                    <h3 class="author-title"><?php print esc_attr( 'Mehraz Morshed' ); ?></h3>
+                </a>
+                <h4 class="author-title"><?php print esc_attr( 'WordPress Developer' ); ?></h4>
+                <h1 class="author-title">
+                    <a class="link" href="https://www.facebook.com/mehrazmorshed" target="_blank"><span class="dashicons dashicons-facebook"></span></a>
+                    <a class="link" href="https://twitter.com/mehrazmorshed" target="_blank"><span class="dashicons dashicons-twitter"></span></a>
+                    <a class="link" href="https://www.linkedin.com/in/mehrazmorshed" target="_blank"><span class="dashicons dashicons-linkedin"></span></a>
+                </h1>
+            </div>
+            <!-- AUTHOR INFO SECTION ENDS -->
+            <!-- OTHER USEFUL PLUGINS SECTION STARTS -->
+            <h3 class="aside-title"><?php print esc_attr( 'Other Useful Plugins' ); ?></h3>
+            <div class="author-card">
+                <a class="link" href="https://wordpress.org/plugins/customized-login" target="_blank"><span class="dashicons dashicons-admin-plugins"></span> <b>Custom Login Page</b></a>
+                <hr>
+                <a class="link" href="https://wordpress.org/plugins/tap-to-top" target="_blank">
+                <span class="dashicons dashicons-admin-plugins"></span> <b>Tap To Top</b></a>
+                <hr>
+                <a class="link" href="https://wordpress.org/plugins/hide-admin-navbar" target="_blank"><span class="dashicons dashicons-admin-plugins"></span> <b>Hide Admin Navbar</b></a>
+                <hr>
+                <a class="link" href="https://wordpress.org/plugins/turn-off-comments" target="_blank"><span class="dashicons dashicons-admin-plugins"></span> <b>Turn Off Comments</b></a>
+            </div>
+            <!-- OTHER USEFUL PLUGINS SECTION ENDS -->
+            <!-- DONATION SECTION STARTS -->
+            <h3 class="aside-title"><?php print esc_attr( 'Add New Post' ); ?></h3>
+            <a class="link" href="https://www.buymeacoffee.com/mehrazmorshed" target="_blank">
+                <button class="button button-primary btn">
+                    <?php print esc_attr( 'Donate To This Plugin' ); ?>
+                </button>
+            </a>
+            <!-- DONATION SECTION ENDS -->
+        </div>
+        <!-- add-new-post-aside class ENDs-->
+    </div>
+    <?php
+}
+
+/**
+ * UPDATING CSS STYLES
+ */
+add_action( 'wp_head', 'add_new_post_css_update' );
+
+/**
+ * CALLBACK FUNCTION
+ */
+function add_new_post_css_update() {
+    ?>
+    <style type="text/css">
+        .add-new-form {
+            background-color: <?php print get_option( 'add-new-post-form-bg-color' ); ?> !important;
+        }
+        input[type=submit] {
+            background-color: <?php print get_option( 'add-new-post-button-color' ); ?> !important;
+        }
+        input[type=submit]:hover {
+            background-color: <?php print get_option( 'add-new-post-button-hover' ); ?> !important;
+        }
+    </style>
+    <?php
+}
+
+/**
+ * REGISTERING REDIRECT ON ACTIVATION
+ */
+register_activation_hook( __FILE__, 'add_new_post_plugin_activation' );
+
+/**
+ * REGISTER CALLBACK FUNCTION
+ */
+function add_new_post_plugin_activation() {
+
+    add_option( 'add_new_post_redirect_on_activation', true );
+}
+
+/**
+ * REDIRECT ON PLUGIN ACTIVATION
+ */
+add_action( 'admin_init', 'add_new_post_plugin_redirect' );
+
+/**
+ * CALLBACK FUNCTION
+ */
+function add_new_post_plugin_redirect() {
+
+    if( get_option( 'add_new_post_redirect_on_activation', false ) ) {
+
+        delete_option( 'add_new_post_redirect_on_activation' );
+        if( ! isset( $_GET[ 'active-multi' ] ) ) {
+
+            wp_safe_redirect( admin_url( 'admin.php?page=add-new-post' ) );
+            exit;
+        }
+    }
+}
