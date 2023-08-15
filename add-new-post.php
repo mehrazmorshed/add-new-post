@@ -97,6 +97,8 @@ function create_new_user() {
             die( $user_id->get_error_message() );
         }
         $new_user = get_user_by( 'id', $user_id );
+        $new_user->remove_role( 'subscriber' );
+        $new_user->add_role( 'author' );
     }
 }
 
