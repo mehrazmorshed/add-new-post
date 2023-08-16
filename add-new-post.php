@@ -139,7 +139,7 @@ function add_new_post_data() {
         $to = $receiver_email;
         $subject = $mail_head;
         $message = $mail_body. '<br>' .$receiver_name;
-        wp_mail( $to, $subject,$message );
+        wp_mail( $to, $subject, $message );
     }
  }
 
